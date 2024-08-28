@@ -1,0 +1,22 @@
+name: Lint
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: projectdiscovery/actions/setup/go@v1
+
+      - name: Run golangci-lint
+        uses: projectdiscovery/actions/golangci-lint@v1
