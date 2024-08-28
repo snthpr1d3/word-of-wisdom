@@ -8,11 +8,16 @@ import (
 	"github.com/word-of-wisdom/internal/client"
 	"log/slog"
 	"net"
+	"os"
 	"time"
 )
 
 func main() {
 	ctx := context.Background()
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	config := client.ParseConfig()
 	conn, err := connectToServer(config.ServerAddr, config.ConnTimeout)
 	if err != nil {
@@ -22,7 +27,7 @@ func main() {
 	defer conn.Close()
 
 	start := time.Now()
-	solution, err := performChallenge(ctx, conn, config.SolvingTimeout)
+	solution, err := performChallenge(ctx, conn, config.SolvingTimeout, config.Concurrency)
 	if err != nil {
 		slog.Error("Error finding solution", "error", err)
 		return
@@ -51,7 +56,7 @@ func connectToServer(serverAddr string, connTimeout time.Duration) (net.Conn, er
 	return conn, nil
 }
 
-func performChallenge(ctx context.Context, conn net.Conn, solvingTimeout time.Duration) (string, error) {
+func performChallenge(ctx context.Context, conn net.Conn, solvingTimeout time.Duration, concurrency int) (string, error) {
 	reader := bufio.NewReader(conn)
 
 	welcomeMsg, err := reader.ReadString('\n')
@@ -73,7 +78,7 @@ func performChallenge(ctx context.Context, conn net.Conn, solvingTimeout time.Du
 		return "", err
 	}
 
-	pow := client.NewPow(0)
+	pow := client.NewPow(concurrency)
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, solvingTimeout)
 	defer cancel()
 

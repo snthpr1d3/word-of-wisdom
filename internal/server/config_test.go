@@ -16,7 +16,7 @@ func TestParseConfig(t *testing.T) {
 			expectedConfig: &AppConfig{
 				ListenPort:      "8080",
 				ConnTimeout:     10 * time.Second,
-				PowDifficulty:   6,
+				PowDifficulty:   5,
 				ChallengeLength: 20,
 				QuotesFilePath:  "./internal/server/quotes_dump.txt",
 			},

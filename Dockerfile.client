@@ -20,4 +20,4 @@ COPY --from=builder ${BUILD_DIR}/app ${BUILD_DIR}/app
 
 EXPOSE 8080
 
-CMD ${BUILD_DIR}/app
+ENTRYPOINT ["/src/app"]
