@@ -51,9 +51,10 @@ func (p *Pow) FindSolution(ctx context.Context, challenge string, difficulty int
 					hashStr := hex.EncodeToString(hash[:])
 					if strings.HasPrefix(hashStr, prefix) {
 						select {
-						case result <- solution:
-							cancel()
+						case <-ctx.Done():
 						default:
+							result <- solution
+							cancel()
 						}
 						return
 					}
