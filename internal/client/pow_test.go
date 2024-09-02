@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"github.com/word-of-wisdom/internal/server"
 	"testing"
 	"time"
 )
@@ -42,12 +43,13 @@ func TestFindSolution_MultipleGoroutines(t *testing.T) {
 	concurrency := 4
 	pow := NewPow(concurrency)
 	challenge := "testchallenge"
-	difficulty := 1
+	difficulty := 2
+	serverPow := server.NewPow(difficulty, 0)
 
 	solution, err := pow.FindSolution(context.Background(), challenge, difficulty)
 	if err != nil {
 		t.Fatalf("Expected no error, got %v", err)
 	}
-
-	assert.Equal(t, solution, "3312")
+	
+	assert.True(t, serverPow.Verify(challenge, solution))
 }
